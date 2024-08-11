@@ -20,7 +20,6 @@
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 5px;
-            transition: background-color 0.4s, color 0.4s;
         }
 
         h2 {
@@ -33,7 +32,6 @@
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
-            transition: background-color 0.4s, color 0.4s;
         }
 
         button {
@@ -44,21 +42,19 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.4s, color 0.4s;
+            transition: background-color 0.4s;
         }
 
         button:hover {
             background-color: #5a6ebc;
         }
 
-        /* CSS para o botão de alternância de tema */
         .switch-container {
             position: absolute;
             top: 20px;
             left: 20px;
         }
 
-        /* From Uiverse.io by satyamchaudharydev */
         .switch {
             display: block;
             --width-of-switch: 3.5em;
@@ -111,7 +107,6 @@
             box-shadow: inset -3px -2px 5px -2px #8983f7, inset -10px -4px 0 0 #a3dafb;
         }
 
-        /* Modo escuro */
         .dark-mode {
             background-color: #2c2f33;
             color: #fff;
@@ -119,7 +114,6 @@
 
         .dark-mode .container {
             background-color: #23272a;
-            color: #fff;
         }
 
         .dark-mode input, .dark-mode textarea {
@@ -130,10 +124,6 @@
 
         .dark-mode button {
             background-color: #4f545c;
-        }
-
-        .dark-mode button:hover {
-            background-color: #40444b;
         }
 
         .status {
@@ -153,7 +143,6 @@
 </head>
 <body>
 
-    <!-- Botão de alternância de tema -->
     <div class="switch-container">
         <label class="switch">
             <input type="checkbox" id="darkModeToggle">
@@ -172,31 +161,26 @@
 
     <script>
         function enviarWebhook() {
-            const servidor = document.getElementById('servidor').value;
-            const usuario = document.getElementById('usuario').value;
-            const motivo = document.getElementById('motivo').value;
+            const campos = ['servidor', 'usuario', 'motivo'];
+            const valores = campos.map(id => document.getElementById(id).value);
 
-            // Verificar se todos os campos estão preenchidos
-            if (!servidor || !usuario || !motivo) {
+            if (valores.some(valor => !valor)) {
                 alert('Por favor, preencha todos os campos antes de enviar.');
                 return;
             }
 
+            const mensagem = {
+                content: `**Servidor:** ${valores[0]}\n**Usuário:** ${valores[1]}\n**Motivo:** ${valores[2]}`
+            };
+
             const webhooks = [
                 "https://discord.com/api/webhooks/1272284374439694511/ZLKxQfL7k9n7TaRcgN0KI7CW44c9TYZO4zeuS-ii-txrvXQ6n0ly2nF7PZwGM_-HB6LV",
-                // Adicione mais URLs de webhooks aqui
                 "https://discord.com/api/webhooks/EXEMPLO1/EXEMPLO2",
                 "https://discord.com/api/webhooks/EXEMPLO3/EXEMPLO4"
             ];
 
-            const mensagem = {
-                content: `**Servidor:** ${servidor}\n**Usuário:** ${usuario}\n**Motivo:** ${motivo}`
-            };
-
             let statusDiv = document.getElementById('status');
-            let sucesso = true;
-
-            webhooks.forEach(url => {
+            let promessas = webhooks.map(url =>
                 fetch(url, {
                     method: 'POST',
                     headers: {
@@ -204,31 +188,33 @@
                     },
                     body: JSON.stringify(mensagem),
                 })
-                .then(response => {
-                    if (response.ok) {
-                        statusDiv.innerHTML += `<p class="success">Denuncia enviada com sucesso para os servidores.</p>`;
-                    } else {
-                        statusDiv.innerHTML += `<p class="error">Ocorreu um erro no envio para alguns servidores. </p>`;
-                        sucesso = false;
-                    }
-                })
-                .catch(error => {
-                    statusDiv.innerHTML += `<p class="error">Erro ao enviar para o servidor: </p>`;
-                    sucesso = false;
-                });
-            });
+            );
 
-            if (sucesso) {
-                alert('Denuncia enviada para todos os servidores com sucesso!');
-            } else {
-                alert('Ocorreu um erro no envio para alguns servidores. Verifique o status.');
-            }
+            Promise.all(promessas).then(respostas => {
+                respostas.forEach((res, index) => {
+                    if (res.ok) {
+                        statusDiv.innerHTML += `<p class="success">Denúncia enviada com sucesso para o servidor ${index + 1}.</p>`;
+                    } else {
+                        statusDiv.innerHTML += `<p class="error">Erro ao enviar para o servidor ${index + 1}.</p>`;
+                    }
+                });
+            }).catch(erro => {
+                statusDiv.innerHTML += `<p class="error">Erro ao enviar a denúncia: ${erro.message}</p>`;
+            });
         }
 
-        // Alternar o modo escuro
         const toggleSwitch = document.getElementById('darkModeToggle');
         toggleSwitch.addEventListener('change', () => {
-            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+                toggleSwitch.checked = true;
+            }
         });
     </script>
 
