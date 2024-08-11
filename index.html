@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diplomacia Rp's - Denuncia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        h2 {
+            text-align: center;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #7289da;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #5a6ebc;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Envio de Webhook</h2>
+        <input type="text" id="servidor" placeholder="Servidor">
+        <input type="text" id="usuario" placeholder="Usuário">
+        <textarea id="motivo" placeholder="Motivo"></textarea>
+        <button onclick="enviarWebhook()">Enviar</button>
+    </div>
+
+    <script>
+        function enviarWebhook() {
+            const webhooks = [
+                "https://discord.com/api/webhooks/1272284374439694511/ZLKxQfL7k9n7TaRcgN0KI7CW44c9TYZO4zeuS-ii-txrvXQ6n0ly2nF7PZwGM_-HB6LV",
+                // Adicione mais URLs de webhooks aqui
+                "https://discord.com/api/webhooks/EXEMPLO1/EXEMPLO2",
+                "https://discord.com/api/webhooks/EXEMPLO3/EXEMPLO4"
+            ];
+
+            const servidor = document.getElementById('servidor').value;
+            const usuario = document.getElementById('usuario').value;
+            const motivo = document.getElementById('motivo').value;
+
+            const mensagem = {
+                content: `**Servidor:** ${servidor}\n**Usuário:** ${usuario}\n**Motivo:** ${motivo}`
+            };
+
+            webhooks.forEach(url => {
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(mensagem),
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log(`Denuncia enviada com sucesso para o server: ${url}`);
+                    } else {
+                        console.error(`Erro ao enviar para o server: ${url}`);
+                    }
+                })
+                .catch(error => {
+                    console.error(`Erro ao enviar para o server: ${url}`, error);
+                });
+            });
+
+            alert('Denuncia enviada para todos os servers!');
+        }
+    </script>
+
+</body>
+</html>
