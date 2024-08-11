@@ -206,14 +206,14 @@
                 })
                 .then(response => {
                     if (response.ok) {
-                        statusDiv.innerHTML += `<p class="success">Denuncia enviada com sucesso para os servidores ${url}</p>`;
+                        statusDiv.innerHTML += `<p class="success">Denuncia enviada com sucesso para os servidores.</p>`;
                     } else {
-                        statusDiv.innerHTML += `<p class="error">Ocorreu um erro no envio para alguns servidores. ${url}</p>`;
+                        statusDiv.innerHTML += `<p class="error">Ocorreu um erro no envio para alguns servidores. </p>`;
                         sucesso = false;
                     }
                 })
                 .catch(error => {
-                    statusDiv.innerHTML += `<p class="error">Erro ao enviar para o servidor: ${url}</p>`;
+                    statusDiv.innerHTML += `<p class="error">Erro ao enviar para o servidor: </p>`;
                     sucesso = false;
                 });
             });
