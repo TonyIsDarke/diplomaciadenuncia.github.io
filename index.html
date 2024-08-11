@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diplomacia Rp's - Denuncia</title>
+    <title>Envio de Webhook para Discord</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
             padding: 20px;
+            transition: background-color 0.4s, color 0.4s;
         }
+
         .container {
             max-width: 400px;
             margin: 0 auto;
@@ -18,17 +20,22 @@
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 5px;
+            transition: background-color 0.4s, color 0.4s;
         }
+
         h2 {
             text-align: center;
         }
+
         input, textarea {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
+            transition: background-color 0.4s, color 0.4s;
         }
+
         button {
             width: 100%;
             padding: 10px;
@@ -37,24 +44,144 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.4s, color 0.4s;
         }
+
         button:hover {
             background-color: #5a6ebc;
+        }
+
+        /* CSS para o botão de alternância de tema */
+        .switch-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        /* From Uiverse.io by satyamchaudharydev */
+        .switch {
+            display: block;
+            --width-of-switch: 3.5em;
+            --height-of-switch: 2em;
+            --size-of-icon: 1.4em;
+            --slider-offset: 0.3em;
+            position: relative;
+            width: var(--width-of-switch);
+            height: var(--height-of-switch);
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #f4f4f5;
+            transition: .4s;
+            border-radius: 30px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: var(--size-of-icon,1.4em);
+            width: var(--size-of-icon,1.4em);
+            border-radius: 20px;
+            left: var(--slider-offset,0.3em);
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(40deg,#ff0080,#ff8c00 70%);
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #303136;
+        }
+
+        input:checked + .slider:before {
+            left: calc(100% - (var(--size-of-icon,1.4em) + var(--slider-offset,0.3em)));
+            background: #303136;
+            box-shadow: inset -3px -2px 5px -2px #8983f7, inset -10px -4px 0 0 #a3dafb;
+        }
+
+        /* Modo escuro */
+        .dark-mode {
+            background-color: #2c2f33;
+            color: #fff;
+        }
+
+        .dark-mode .container {
+            background-color: #23272a;
+            color: #fff;
+        }
+
+        .dark-mode input, .dark-mode textarea {
+            background-color: #2c2f33;
+            color: #fff;
+            border: 1px solid #7289da;
+        }
+
+        .dark-mode button {
+            background-color: #4f545c;
+        }
+
+        .dark-mode button:hover {
+            background-color: #40444b;
+        }
+
+        .status {
+            margin-top: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
         }
     </style>
 </head>
 <body>
 
+    <!-- Botão de alternância de tema -->
+    <div class="switch-container">
+        <label class="switch">
+            <input type="checkbox" id="darkModeToggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+
     <div class="container">
-        <h2>Diplomacia Rps - Denuncia</h2>
+        <h2>Diplomacia Rp's - Denunciar</h2>
         <input type="text" id="servidor" placeholder="Servidor">
         <input type="text" id="usuario" placeholder="Usuário">
         <textarea id="motivo" placeholder="Motivo"></textarea>
-        <button onclick="enviarWebhook()">Enviar</button>
+        <button onclick="enviarWebhook()">Denunciar</button>
+        <div id="status" class="status"></div>
     </div>
 
     <script>
         function enviarWebhook() {
+            const servidor = document.getElementById('servidor').value;
+            const usuario = document.getElementById('usuario').value;
+            const motivo = document.getElementById('motivo').value;
+
+            // Verificar se todos os campos estão preenchidos
+            if (!servidor || !usuario || !motivo) {
+                alert('Por favor, preencha todos os campos antes de enviar.');
+                return;
+            }
+
             const webhooks = [
                 "https://discord.com/api/webhooks/1272284374439694511/ZLKxQfL7k9n7TaRcgN0KI7CW44c9TYZO4zeuS-ii-txrvXQ6n0ly2nF7PZwGM_-HB6LV",
                 // Adicione mais URLs de webhooks aqui
@@ -62,13 +189,12 @@
                 "https://discord.com/api/webhooks/EXEMPLO3/EXEMPLO4"
             ];
 
-            const servidor = document.getElementById('servidor').value;
-            const usuario = document.getElementById('usuario').value;
-            const motivo = document.getElementById('motivo').value;
-
             const mensagem = {
                 content: `**Servidor:** ${servidor}\n**Usuário:** ${usuario}\n**Motivo:** ${motivo}`
             };
+
+            let statusDiv = document.getElementById('status');
+            let sucesso = true;
 
             webhooks.forEach(url => {
                 fetch(url, {
@@ -80,18 +206,30 @@
                 })
                 .then(response => {
                     if (response.ok) {
-                        console.log(`Denuncia enviada com sucesso para o server: ${url}`);
+                        statusDiv.innerHTML += `<p class="success">Denuncia enviada com sucesso para os servidores ${url}</p>`;
                     } else {
-                        console.error(`Erro ao enviar para o server: ${url}`);
+                        statusDiv.innerHTML += `<p class="error">Ocorreu um erro no envio para alguns servidores. ${url}</p>`;
+                        sucesso = false;
                     }
                 })
                 .catch(error => {
-                    console.error(`Erro ao enviar para o server: ${url}`, error);
+                    statusDiv.innerHTML += `<p class="error">Erro ao enviar para o servidor: ${url}</p>`;
+                    sucesso = false;
                 });
             });
 
-            alert('Denuncia enviada para todos os servers!');
+            if (sucesso) {
+                alert('Denuncia enviada para todos os servidores com sucesso!');
+            } else {
+                alert('Ocorreu um erro no envio para alguns servidores. Verifique o status.');
+            }
         }
+
+        // Alternar o modo escuro
+        const toggleSwitch = document.getElementById('darkModeToggle');
+        toggleSwitch.addEventListener('change', () => {
+            document.body.classList.toggle('dark-mode');
+        });
     </script>
 
 </body>
