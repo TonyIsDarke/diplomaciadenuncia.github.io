@@ -139,24 +139,95 @@
         .error {
             color: red;
         }
+
+        /* Estilo para o rodapé */
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 0.9em;
+            color: #555;
+            border-top: 1px solid #ccc;
+        }
+
+        .dark-mode footer {
+            border-top: 1px solid #4f545c;
+            color: #bbb;
+        }
+
+        /* Novo CSS */
+        #loading-screen {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #content {
+            display: none; /* Oculta o conteúdo até que o carregamento seja concluído */
+        }
+
+        /* CSS da animação de carregamento */
+        .typewriter {
+            --blue: #5C86FF;
+            --blue-dark: #275EFE;
+            --key: #fff;
+            --paper: #EEF0FD;
+            --text: #D3D4EC;
+            --tool: #FBC56C;
+            --duration: 3s;
+            position: relative;
+            -webkit-animation: bounce05 var(--duration) linear infinite;
+            animation: bounce05 var(--duration) linear infinite;
+        }
+
+        .typewriter .slide {
+            width: 92px;
+            height: 20px;
+            border-radius: 3px;
+            margin-left: 14px;
+            transform: translateX(14px);
+            background: linear-gradient(var(--blue), var(--blue-dark));
+            -webkit-animation: slide05 var(--duration) ease infinite;
+            animation: slide05 var(--duration) ease infinite;
+        }
+
+        /* Restante do CSS da animação */
     </style>
 </head>
 <body>
-
-    <div class="switch-container">
-        <label class="switch">
-            <input type="checkbox" id="darkModeToggle">
-            <span class="slider"></span>
-        </label>
+    <!-- Tela de Carregamento -->
+    <div id="loading-screen" class="typewriter">
+        <div class="slide"><i></i></div>
+        <div class="paper"></div>
+        <div class="keyboard"></div>
     </div>
 
-    <div class="container">
-        <h2>Diplomacia Rp's - Denunciar</h2>
-        <input type="text" id="servidor" placeholder="Servidor">
-        <input type="text" id="usuario" placeholder="Usuário">
-        <textarea id="motivo" placeholder="Motivo"></textarea>
-        <button onclick="enviarWebhook()">Denunciar</button>
-        <div id="status" class="status"></div>
+    <!-- Conteúdo Principal -->
+    <div id="content">
+        <div class="switch-container">
+            <label class="switch">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="container">
+            <h2>Diplomacia Rp's - Denunciar</h2>
+            <input type="text" id="servidor" placeholder="Servidor">
+            <input type="text" id="usuario" placeholder="Usuário">
+            <textarea id="motivo" placeholder="Motivo"></textarea>
+            <button onclick="enviarWebhook()">Denunciar</button>
+            <div id="status" class="status"></div>
+        </div>
+
+        <footer>
+            Todos os direitos reservados aos servidores participantes da Diplomacia RP's 2024. O conteúdo deste site é protegido por leis de direitos autorais e de propriedade intelectual. Qualquer reprodução, distribuição ou uso não autorizado do material aqui contido está estritamente proibido e pode resultar em sanções legais. Ao acessar este site, você concorda com nossos termos de uso.
+        </footer>
     </div>
 
     <script>
@@ -203,18 +274,26 @@
             });
         }
 
+        // Função para alternar o modo escuro e salvar a preferência do usuário
         const toggleSwitch = document.getElementById('darkModeToggle');
         toggleSwitch.addEventListener('change', () => {
             const isDark = document.body.classList.toggle('dark-mode');
             localStorage.setItem('darkMode', isDark);
         });
 
+        // Função para verificar se o usuário tinha o modo escuro ativado
         document.addEventListener('DOMContentLoaded', () => {
             const darkMode = localStorage.getItem('darkMode') === 'true';
             if (darkMode) {
                 document.body.classList.add('dark-mode');
                 toggleSwitch.checked = true;
             }
+
+            // Esconde a tela de carregamento após o carregamento da página
+            const loadingScreen = document.getElementById('loading-screen');
+            const content = document.getElementById('content');
+            loadingScreen.style.display = 'none';
+            content.style.display = 'block';
         });
     </script>
 
